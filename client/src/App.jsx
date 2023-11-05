@@ -4,7 +4,8 @@ import SignIn from "./pages/SignIn";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Header from "./components/Header";
-import { UserContextProvider } from "./userContext";
+import SignUP from "./pages/SignUp";
+import { UserContextProvider } from "./UserContext";
 export default function App() {
     return (
         <BrowserRouter>

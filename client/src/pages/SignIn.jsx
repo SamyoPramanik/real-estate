@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from "../userContext";
+import { UserContext } from "../UserContext.jsx";
 
 export default function SignIn() {
     const [formData, setFormData] = useState({});

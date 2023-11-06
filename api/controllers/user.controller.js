@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import User from "../models/User.model.js";
 import uploder from "../utils/multerConfig.js";
+import Listing from "../models/Listing.model.js";
 
 export const test = (req, res) => {
     res.json("Hello World");
@@ -64,6 +65,15 @@ export const showFilenames = async (req, res, next) => {
             success: true,
             filename: req.files[0].filename,
         });
+    } catch (err) {
+        next(errorHandler(500, err.message));
+    }
+};
+
+export const getUserListings = async (req, res, next) => {
+    try {
+        const listings = await Listing.find({ userRef: req.user.id });
+        res.status(200).json(listings);
     } catch (err) {
         next(errorHandler(500, err.message));
     }

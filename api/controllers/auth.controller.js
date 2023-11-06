@@ -73,6 +73,15 @@ export const google = async (req, res, next) => {
     }
 };
 
+export const signout = async (req, res, next) => {
+    try {
+        res.clearCookie("access_token");
+        res.status(200).json("User has been logged out");
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const update_avatar = async (req, res, next) => {
     try {
         uploder.any()(req, res, async (err) => {

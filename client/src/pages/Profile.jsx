@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../userContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Profile() {
     const { userInfo, setUserInfo } = useContext(UserContext);
@@ -157,6 +157,12 @@ export default function Profile() {
                 >
                     {loading ? `updating...` : `update`}
                 </button>
+                <Link
+                    to={"/create-listing"}
+                    className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+                >
+                    create listing
+                </Link>
             </form>
             <div className="flex justify-between mt-5">
                 <span

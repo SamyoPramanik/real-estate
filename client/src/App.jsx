@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import SignUP from "./pages/SignUp";
 import { UserContextProvider } from "./UserContext";
 import PrivateRoute from "./components/PrivateRoute";
+import CreateListing from "./pages/CreateListing";
 export default function App() {
     return (
         <BrowserRouter>
@@ -19,6 +20,10 @@ export default function App() {
                     <Route path="/sign-up" element={<SignUP />} />
                     <Route element={<PrivateRoute />}>
                         <Route path="/profile" element={<Profile />} />
+                        <Route
+                            path="/create-listing"
+                            element={<CreateListing />}
+                        />
                     </Route>
                 </Routes>
             </UserContextProvider>

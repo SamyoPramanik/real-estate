@@ -6,17 +6,20 @@ export default function Profile() {
     const [file, setFile] = useState(null);
     const [fileError, setFileError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [formData, setFormData] = useState();
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
     const fileRef = useRef(null);
 
     useEffect(() => {
         setFileError(null);
-        const formData = new FormData();
-        formData.set("avatar", file);
+        const avatarData = new FormData();
+        avatarData.set("avatar", file);
         try {
             setSuccess("Uploading profile picture...");
             fetch("/api/user/update-avatar", {
                 method: "POST",
-                body: formData,
+                body: avatarData,
             }).then((res) => {
                 res.json().then((data) => {
                     if (data.success === false) {
@@ -26,6 +29,8 @@ export default function Profile() {
                         setFileError(null);
                         const avatar = "/api/avatars/" + data.filename;
                         setUserInfo({ ...userInfo, avatar });
+                        setFormData({ ...formData, avatar });
+
                         setSuccess("Profile picture updated successfully");
                     }
                 });
@@ -35,10 +40,42 @@ export default function Profile() {
         }
     }, [file]);
 
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
+
+    const updateuser = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+        console.log(formData);
+        try {
+            const res = await fetch("/api/user/update", {
+                method: "POST",
+                body: JSON.stringify(formData),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await res.json();
+            console.log(data);
+            if (data.success == false) {
+                setError(data.message);
+                setLoading(false);
+            } else {
+                setError("User updated successfully");
+                setLoading(false);
+            }
+        } catch (err) {
+            setLoading(false);
+            setError(err);
+        }
+    };
+
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={updateuser}>
                 <input
                     type="file"
                     ref={fileRef}
@@ -67,21 +104,29 @@ export default function Profile() {
                     placeholder="Username"
                     className="border p-3 rounded-lg"
                     id="username"
+                    defaultValue={userInfo.username}
+                    onChange={handleChange}
                 />
                 <input
                     type="text"
                     placeholder="Email"
                     className="border p-3 rounded-lg"
                     id="email"
+                    defaultValue={userInfo.email}
+                    onChange={handleChange}
                 />
                 <input
-                    type="text"
+                    type="password"
                     placeholder="Password"
                     className="border p-3 rounded-lg"
                     id="password"
+                    onChange={handleChange}
                 />
-                <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-                    update
+                <button
+                    className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+                    disabled={loading}
+                >
+                    {loading ? `updating...` : `update`}
                 </button>
             </form>
             <div className="flex justify-between mt-5">
@@ -90,6 +135,7 @@ export default function Profile() {
                 </span>
                 <span className="text-red-700 cursor-pointer">Sign Out</span>
             </div>
+            {error && <p className="text-red-700 mt-5">{error}</p>}
         </div>
     );
 }

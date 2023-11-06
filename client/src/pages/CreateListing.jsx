@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateListing() {
     const [files, setFiles] = useState([]);
     const [imageUploadError, setImageUploadError] = useState(null);
     const [fileUrls, setFileUrls] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         parking: false,
         furnished: false,
@@ -104,6 +106,7 @@ export default function CreateListing() {
             const data = await res.json();
             setLoading(false);
             if (data.success === false) setError(data.message);
+            else navigate(`/listing/${data._id}`);
         } catch (err) {
             setError(err.message);
             setLoading(false);
@@ -126,7 +129,7 @@ export default function CreateListing() {
                         className="border p-3 rounded-lg"
                         id="name"
                         maxLength="62"
-                        minLength="10"
+                        minLength="1"
                         required
                         value={formData?.name}
                         onChange={handleChange}

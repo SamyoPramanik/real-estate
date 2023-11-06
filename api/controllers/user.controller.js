@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import User from "../models/User.model.js";
+import uploder from "../utils/multerConfig.js";
 
 export const test = (req, res) => {
     res.json("Hello World");
@@ -37,6 +38,32 @@ export const deleteUser = async (req, res, next) => {
         await User.findByIdAndDelete(req.user.id);
         res.clearCookie("access_token");
         res.status(200).json("User has been deleted");
+    } catch (err) {
+        next(errorHandler(500, err.message));
+    }
+};
+
+export const updateIamges = async (req, res, next) => {
+    try {
+        uploder.any()(req, res, async (err) => {
+            if (err) {
+                console.log(err);
+                return next(errorHandler(500, err.message));
+            } else {
+                return next();
+            }
+        });
+    } catch (err) {
+        return next(errorHandler(500, err.message));
+    }
+};
+
+export const showFilenames = async (req, res, next) => {
+    try {
+        res.status(200).json({
+            success: true,
+            filename: req.files[0].filename,
+        });
     } catch (err) {
         next(errorHandler(500, err.message));
     }

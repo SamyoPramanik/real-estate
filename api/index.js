@@ -30,7 +30,7 @@ app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRoute);
 
-app.get("/api/avatars/:filename", (req, res) => {
+app.get("/api/uploads/:filename", (req, res) => {
     const __dirname = path.resolve(path.dirname(""));
     res.sendFile(__dirname + "/api/uploads/" + req.params.filename);
 });

@@ -29,7 +29,7 @@ export default function Profile() {
                         setSuccess(null);
                     } else {
                         setFileError(null);
-                        const avatar = "/api/avatars/" + data.filename;
+                        const avatar = "/api/uploads/" + data.filename;
                         setUserInfo({ ...userInfo, avatar });
                         setFormData({ ...formData, avatar });
 

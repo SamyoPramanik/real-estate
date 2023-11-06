@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../userContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
     const { userInfo, setUserInfo } = useContext(UserContext);
@@ -10,6 +11,7 @@ export default function Profile() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const fileRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setFileError(null);
@@ -72,6 +74,23 @@ export default function Profile() {
         }
     };
 
+    const deleteUser = async (e) => {
+        try {
+            const res = await fetch("/api/user/delete", {
+                method: "DELETE",
+            });
+
+            const data = await res.json();
+            if (data.success == false) setError(data.message);
+            else {
+                setUserInfo(null);
+                navigate("/");
+            }
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -130,7 +149,10 @@ export default function Profile() {
                 </button>
             </form>
             <div className="flex justify-between mt-5">
-                <span className="text-red-700 cursor-pointer">
+                <span
+                    className="text-red-700 cursor-pointer"
+                    onClick={deleteUser}
+                >
                     Delete Account
                 </span>
                 <span className="text-red-700 cursor-pointer">Sign Out</span>

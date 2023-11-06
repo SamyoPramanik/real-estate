@@ -37,7 +37,7 @@ export default function Header() {
                             About
                         </li>
                     </Link>
-                    {userInfo.username ? (
+                    {userInfo?.username ? (
                         <Link to="/profile">
                             <li className="sm:inline hover:underline">
                                 <img

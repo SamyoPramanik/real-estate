@@ -1,12 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import path from "path";
+import cookieParser from "cookie-parser";
 
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 dotenv.config();
 
 console.log(process.env.MONGO);
@@ -24,6 +27,10 @@ app.listen(3000, () => {
 
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.get("/api/avatars/:filename", (req, res) => {
+    const __dirname = path.resolve(path.dirname(""));
+    res.sendFile(__dirname + "/api/uploads/" + req.params.filename);
+});
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;

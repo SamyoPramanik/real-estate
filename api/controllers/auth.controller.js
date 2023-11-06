@@ -1,7 +1,8 @@
-import { errorHandler } from "../error.js";
+import { errorHandler } from "../utils/error.js";
 import User from "../models/User.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import uploder from "../utils/multerConfig.js";
 
 export const signup = async (req, res, next) => {
     try {
@@ -69,5 +70,32 @@ export const google = async (req, res, next) => {
         }
     } catch (err) {
         next(err);
+    }
+};
+
+export const update_avatar = async (req, res, next) => {
+    try {
+        uploder.any()(req, res, async (err) => {
+            if (err) {
+                console.log(err);
+                return next(err);
+            } else {
+                return next(err);
+            }
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const showFilename = (req, res, next) => {
+    try {
+        console.log(req.files[0].filename);
+        res.status(200).json({
+            success: true,
+            filename: req.files[0].filename,
+        });
+    } catch (err) {
+        next(errorHandler(400, req.error));
     }
 };

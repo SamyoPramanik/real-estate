@@ -39,7 +39,7 @@ export default function Header() {
                     </Link>
                     {userInfo.username ? (
                         <Link to="/profile">
-                            <li className="hidden sm:inline hover:underline">
+                            <li className="sm:inline hover:underline">
                                 <img
                                     className="rounded-full h-7 w-7 object-cover"
                                     src={userInfo.avatar}

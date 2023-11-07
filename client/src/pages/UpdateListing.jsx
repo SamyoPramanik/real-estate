@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreateListing() {
+export default function UpdateListing() {
     const [files, setFiles] = useState([]);
     const [imageUploadError, setImageUploadError] = useState(null);
     const [fileUrls, setFileUrls] = useState([]);
@@ -15,10 +15,32 @@ export default function CreateListing() {
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const params = useParams();
 
     useEffect(() => {
         setFormData({ ...formData, imageUrls: fileUrls });
     }, [fileUrls]);
+
+    useEffect(() => {
+        const fetchListing = async () => {
+            try {
+                const listingId = params.id;
+                console.log(listingId);
+                const res = await fetch(`/api/listing/get/${listingId}`);
+                const data = await res.json();
+                if (data.success === false) {
+                    setError(data.message);
+                } else {
+                    setFormData(data);
+                    setFileUrls(data.imageUrls);
+                }
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchListing();
+    }, []);
 
     const handleImageSubmit = async (e) => {
         try {
@@ -97,8 +119,9 @@ export default function CreateListing() {
         try {
             setLoading(true);
             setError(null);
+            const listingId = params.id;
 
-            const res = await fetch("/api/listing/create", {
+            const res = await fetch(`/api/listing/update/${listingId}`, {
                 method: "POST",
                 body: JSON.stringify(formData),
                 headers: { "Content-Type": "application/json" },
@@ -116,7 +139,7 @@ export default function CreateListing() {
     return (
         <main className="p-3 max-w-4xl mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">
-                Crate a Listing
+                Update a Listing
             </h1>
             <form
                 onSubmit={handleSubmit}
@@ -322,7 +345,7 @@ export default function CreateListing() {
                         className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
                         disabled={loading}
                     >
-                        {loading ? `Creating...` : `Create Listing`}
+                        {loading ? `updating...` : `update Listing`}
                     </button>
                     {error && <p className="text-red-700 text-sm">{error}</p>}
                 </div>

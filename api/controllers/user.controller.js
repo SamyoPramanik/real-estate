@@ -4,8 +4,14 @@ import User from "../models/User.model.js";
 import uploder from "../utils/multerConfig.js";
 import Listing from "../models/Listing.model.js";
 
-export const test = (req, res) => {
-    res.json("Hello World");
+export const getInfo = async (req, res, next) => {
+    try {
+        const data = await User.findById(req.user.id);
+        const { password, ...user } = data._doc;
+        res.status(200).json(user);
+    } catch (err) {
+        next(errorHandler(500, err.message));
+    }
 };
 
 export const updateUser = async (req, res, next) => {

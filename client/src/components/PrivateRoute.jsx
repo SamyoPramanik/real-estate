@@ -1,8 +1,22 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../userContext";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 export default function PrivateRoute() {
     const { userInfo, setUserInfo } = useContext(UserContext);
-    return userInfo.username ? <Outlet /> : <Navigate to="/sign-in" />;
+    const [isReady, setIsReady] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {
+        fetch("/api/user/info").then((res) =>
+            res.json().then((data) => {
+                setUserInfo(data);
+                setIsReady(true);
+            })
+        );
+        console.log(`data:${userInfo.username}`);
+    }, []);
+    return (
+        isReady && (userInfo.username ? <Outlet /> : <Navigate to="/sign-in" />)
+    );
+    return <Outlet />;
 }

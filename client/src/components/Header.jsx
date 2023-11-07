@@ -6,6 +6,9 @@ import { useContext, useEffect } from "react";
 export default function Header() {
     const { userInfo, setUserInfo } = useContext(UserContext);
     useEffect(() => {
+        fetch("/api/user/info").then((res) =>
+            res.json().then((data) => setUserInfo(data))
+        );
         console.log(`data:${userInfo.username}`);
     }, []);
 

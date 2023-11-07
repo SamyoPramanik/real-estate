@@ -27,3 +27,21 @@ export const deleteListing = async (req, res, next) => {
         next(errorHandler(500, err.message));
     }
 };
+
+export const updateListing = async (req, res, next) => {
+    try {
+        const listing = await Listing.findById(req.params.id);
+
+        if (!listing) {
+            return next(errorHandler(404, "Listing not found"));
+        }
+        const updatedListing = await Listing.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        res.status(200).json(updatedListing);
+    } catch (err) {
+        next(errorHandler(500, err.message));
+    }
+};

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
@@ -12,6 +12,8 @@ import {
     FaParking,
     FaShare,
 } from "react-icons/fa";
+import { UserContext } from "../UserContext";
+import Contact from "../components/Contact";
 
 export default function Listing() {
     SwiperCore.use([Navigation]);
@@ -20,6 +22,8 @@ export default function Listing() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [contact, setContact] = useState(false);
+    const { userInfo, setUserInfo } = useContext(UserContext);
     useEffect(() => {
         const fetchListing = async () => {
             try {
@@ -103,11 +107,15 @@ export default function Listing() {
                                     ? "For Rent"
                                     : "For Sale"}
                             </p>
-                            {listing.offer && (
+                            {listing.offer ? (
                                 <p className="bg-green-900 w-full max-w-[200px] text-white text-center p-2 rounded-md">
                                     $
                                     {+listing.regularPrice -
                                         +listing.discountPrice}
+                                </p>
+                            ) : (
+                                <p className="bg-green-900 w-full max-w-[200px] text-white text-center p-2 rounded-md">
+                                    ${+listing.regularPrice}
                                 </p>
                             )}
                         </div>
@@ -138,9 +146,28 @@ export default function Listing() {
                             </li>
                             <li className="flex items-center gap-1 whitespace-nowrap ">
                                 <FaChair className="text-lg" />
-                                {listing.farnished ? "Furnished" : "Unfrnished"}
+                                {listing.furnished ? "Furnished" : "Unfrnished"}
                             </li>
                         </ul>
+                        {!contact &&
+                            userInfo._id &&
+                            userInfo._id !== listing.userRef && (
+                                <button
+                                    onClick={() => setContact(true)}
+                                    className="bg-slate-700 text-white uppercase rounded-lg hover:opacity-95 p-3"
+                                >
+                                    Contact landlord
+                                </button>
+                            )}
+                        {userInfo._id && userInfo._id === listing.userRef && (
+                            <Link
+                                className="bg-slate-700 text-white uppercase rounded-lg hover:opacity-95 p-3 text-center"
+                                to={`/update-listing/${listing._id}`}
+                            >
+                                Update Listing
+                            </Link>
+                        )}
+                        {contact && <Contact listing={listing} />}
                     </div>
                 </div>
             )}

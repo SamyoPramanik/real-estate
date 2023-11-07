@@ -6,6 +6,7 @@ import {
     updateUser,
     getUserListings,
     getInfo,
+    getUser,
 } from "../controllers/user.controller.js";
 import { showFilename, update_avatar } from "../controllers/auth.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
@@ -19,5 +20,6 @@ userRouter.delete("/delete", verifyToken, deleteUser);
 userRouter.post("/update", verifyToken, updateUser);
 userRouter.post("/uploadImages", verifyToken, updateIamges, showFilenames);
 userRouter.get("/listings", verifyToken, getUserListings);
+userRouter.get("/:id", verifyToken, getUser);
 
 export default userRouter;

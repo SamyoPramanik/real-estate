@@ -12,3 +12,18 @@ export const createListing = async (req, res, next) => {
         next(errorHandler(err.statusCode, err.message));
     }
 };
+
+export const deleteListing = async (req, res, next) => {
+    try {
+        const listing = await Listing.findById(req.params.id);
+
+        if (!listing) {
+            return next(errorHandler(404, "Listing not found"));
+        }
+
+        await Listing.findByIdAndDelete(req.params.id);
+        res.status(200).json("Listing deleted successfully");
+    } catch (err) {
+        next(errorHandler(500, err.message));
+    }
+};

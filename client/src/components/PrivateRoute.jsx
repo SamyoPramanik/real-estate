@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../userContext";
+import { UserContext } from "../UserContext";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 export default function PrivateRoute() {
@@ -18,5 +18,4 @@ export default function PrivateRoute() {
     return (
         isReady && (userInfo.username ? <Outlet /> : <Navigate to="/sign-in" />)
     );
-    return <Outlet />;
 }

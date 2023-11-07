@@ -1,6 +1,6 @@
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { UserContext } from "../userContext";
+import { UserContext } from "../UserContext";
 import { useContext, useEffect } from "react";
 
 export default function Header() {

@@ -26,7 +26,7 @@ export default function Header() {
         const urlParams = new URLSearchParams(window.location.search);
         const searchTerm = urlParams.get("searchTerm");
         setSearchTerm(searchTerm);
-    }, []);
+    }, [location.search]);
 
     return (
         <header className="bg-slate-200 shadow-sm">

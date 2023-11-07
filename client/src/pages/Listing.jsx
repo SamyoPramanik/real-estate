@@ -151,6 +151,7 @@ export default function Listing() {
                             </li>
                         </ul>
                         {!contact &&
+                            userInfo &&
                             userInfo._id &&
                             userInfo._id !== listing.userRef && (
                                 <button

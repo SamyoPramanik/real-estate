@@ -35,6 +35,10 @@ export const updateListing = async (req, res, next) => {
         if (!listing) {
             return next(errorHandler(404, "Listing not found"));
         }
+
+        if (req.user.id != listing.userRef)
+            return next(errorHandler(401, "You cannot update this listing"));
+
         const updatedListing = await Listing.findByIdAndUpdate(
             req.params.id,
             req.body,

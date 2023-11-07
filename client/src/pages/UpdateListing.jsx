@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 export default function UpdateListing() {
     const [files, setFiles] = useState([]);
@@ -16,6 +17,7 @@ export default function UpdateListing() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const params = useParams();
+    const { userInfo, setUserInfo } = useContext(UserContext);
 
     useEffect(() => {
         setFormData({ ...formData, imageUrls: fileUrls });
@@ -31,6 +33,9 @@ export default function UpdateListing() {
                 if (data.success === false) {
                     setError(data.message);
                 } else {
+                    if (userInfo._id !== data.userRef)
+                        return navigate(`/listing/${listingId}`);
+
                     setFormData(data);
                     setFileUrls(data.imageUrls);
                 }

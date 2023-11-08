@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { UserContext } from "../userContext";
+import { UserContext } from "../UserContext";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Profile() {

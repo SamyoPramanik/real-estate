@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
 import { useContext } from "react";
-import { UserContext } from "../userContext";
+import { UserContext } from "../UserContext";
 import { useNavigate } from "react-router-dom";
 export default function OAuth() {
     const { uesrInfo, setUserInfo } = useContext(UserContext);

@@ -4,7 +4,7 @@ import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
 import { Link } from "react-router-dom";
-import { UserContext } from "../userContext.jsx";
+import { UserContext } from "../UserContext.jsx";
 import ListingItem from "../components/ListingItem.jsx";
 export default function Home() {
     const { userInfo, setUserInfo } = useContext(UserContext);

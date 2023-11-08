@@ -1,48 +1,87 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, useNavigate } from "react-router-dom";
+import {
+    getDownloadURL,
+    getStorage,
+    ref,
+    uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
 
 export default function Profile() {
     const { userInfo, setUserInfo } = useContext(UserContext);
-    const [file, setFile] = useState(null);
-    const [fileError, setFileError] = useState(null);
+    const [file, setFile] = useState(undefined);
+    const [fileError, setFileError] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [formData, setFormData] = useState();
+    const [filePerc, setFilePerc] = useState(0);
+    const [formData, setFormData] = useState({});
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [showListingError, setShowListingError] = useState(null);
     const [listings, setListings] = useState([]);
     const fileRef = useRef(null);
     const navigate = useNavigate();
+    console.log(formData);
 
     useEffect(() => {
-        setFileError(null);
-        const avatarData = new FormData();
-        avatarData.set("avatar", file);
-        try {
-            setSuccess("Uploading profile picture...");
-            fetch("/api/user/update-avatar", {
-                method: "POST",
-                body: avatarData,
-            }).then((res) => {
-                res.json().then((data) => {
-                    if (data.success === false) {
-                        setFileError(data.message);
-                        setSuccess(null);
-                    } else {
-                        setFileError(null);
-                        const avatar = "/api/uploads/" + data.filename;
-                        setUserInfo({ ...userInfo, avatar });
-                        setFormData({ ...formData, avatar });
-
-                        setSuccess("Profile picture updated successfully");
-                    }
-                });
-            });
-        } catch (err) {
-            console.log(err);
+        if (file) {
+            handleFileUpload(file);
         }
     }, [file]);
+
+    const handleFileUpload = (file) => {
+        const storage = getStorage(app);
+        const fileName = new Date().getTime() + file.name;
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setFilePerc(Math.round(progress));
+            },
+            (err) => {
+                setFileError(true);
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    setFormData({ ...formData, avatar: downloadURL });
+                });
+            }
+        );
+    };
+
+    // useEffect(() => {
+    //     setFileError(null);
+    //     const avatarData = new FormData();
+    //     avatarData.set("avatar", file);
+    //     try {
+    //         setSuccess("Uploading profile picture...");
+    //         fetch("/api/user/update-avatar", {
+    //             method: "POST",
+    //             body: avatarData,
+    //         }).then((res) => {
+    //             res.json().then((data) => {
+    //                 if (data.success === false) {
+    //                     setFileError(data.message);
+    //                     setSuccess(null);
+    //                 } else {
+    //                     setFileError(null);
+    //                     const avatar = "/api/uploads/" + data.filename;
+    //                     setUserInfo({ ...userInfo, avatar });
+    //                     setFormData({ ...formData, avatar });
+
+    //                     setSuccess("Profile picture updated successfully");
+    //                 }
+    //             });
+    //         });
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }, [file]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -69,6 +108,7 @@ export default function Profile() {
             } else {
                 setError("User updated successfully");
                 setLoading(false);
+                setUserInfo(data);
             }
         } catch (err) {
             setLoading(false);
@@ -147,19 +187,22 @@ export default function Profile() {
                 />
                 <img
                     onClick={() => fileRef.current.click()}
-                    src={userInfo.avatar}
+                    src={formData.avatar || userInfo.avatar}
                     alt="profile"
                     className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
                 />
-                {fileError && (
+                {fileError ? (
                     <p className="text-red-700 text-sm self-center">
-                        {fileError}
+                        Error Image upload
                     </p>
-                )}
-                {success && (
+                ) : filePerc > 0 && filePerc < 100 ? (
+                    <p className="text-black text-sm self-center">{`Uploading ${filePerc}%`}</p>
+                ) : filePerc === 100 ? (
                     <p className="text-green-700 text-sm self-center">
-                        {success}
+                        Image successfully uploaded
                     </p>
+                ) : (
+                    ""
                 )}
                 <input
                     type="text"

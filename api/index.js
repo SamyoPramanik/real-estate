@@ -8,6 +8,8 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import listingRoute from "./routes/listing.route.js";
 
+const __dirname = path.resolve();
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -33,6 +35,12 @@ app.use("/api/listing", listingRoute);
 app.get("/api/uploads/:filename", (req, res) => {
     const __dirname = path.resolve(path.dirname(""));
     res.sendFile(__dirname + "/api/uploads/" + req.params.filename);
+});
+
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
 app.use((err, req, res, next) => {
